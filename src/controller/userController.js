@@ -77,7 +77,7 @@ const loginUser = async function (req, res) {
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
         }
 
-        const token = jwt.sign(payload, ' Ajit - project - 3')
+        const token = jwt.sign(payload,' Ajit - project - 3')
         return res.status(200).send({ status: false, msg: "User logged in succesfully", data: token })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -87,4 +87,4 @@ const loginUser = async function (req, res) {
 }
 
 module.exports.createUser = createUser;
-module.exports.loginUser = loginUser;
+module.exports.loginUser=loginUser;
