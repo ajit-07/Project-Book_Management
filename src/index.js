@@ -7,7 +7,7 @@ const app=express();
 app.use(bodyparser.json());
 
 
-mongoose.connect("mongodb+srv://ajit-07:pzD85GscINrNEeKB@cluster0.mzumpor.mongodb.net/ajit070698-project:3")
+mongoose.connect("mongodb+srv://ajit-07:pzD85GscINrNEeKB@cluster0.mzumpor.mongodb.net/Group69Database")
 .then(()=>console.log("DB connected successfully"))
 .catch((err)=>console.log(err))
 
