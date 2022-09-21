@@ -68,7 +68,7 @@ const loginUser = async function (req, res) {
         if (!validator.isValid(password)) return res.status(400).send({ status: false, msg: "password is required!!" })
 
         let findUser = await userModel.findOne({ email, password })
-        if (!findUser) return res.status(404).send({ status: false, msg: "Invalid login credentials" })
+        if (!findUser) return res.status(401).send({ status: false, msg: "Invalid login credentials" })
 
         let id = findUser._id;
 
@@ -78,7 +78,7 @@ const loginUser = async function (req, res) {
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
         }
 
-        const token = jwt.sign(payload, ' Ajit - project - 3')
+        const token = jwt.sign(payload, 'Group-69-Project-3')
         return res.status(200).send({ status: true, msg: "User logged in succesfully", data: token, iat: payload.iat, exp: payload.exp })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })

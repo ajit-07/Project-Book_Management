@@ -19,7 +19,7 @@ const createBook = async function (req, res) {
         if (!ObjectId.isValid(userId)) return res.status(400).send({ status: false, msg: "Invalid user id it should be of 24 digits" })
 
         let userCheck = await userModel.findById(userId)
-        if (!userCheck) return res.status(400).send({ status: false, msg: "No user found with this user Id" })
+        if (!userCheck) return res.status(404).send({ status: false, msg: "No user found with this user Id" })
 
         //validation for other data in request body
 
@@ -90,7 +90,7 @@ const getBooks = async function (req, res) {
             createdAt: 0,
             __v: 0
         }).sort({ title: 1 });
-        if (result.length === 0) return res.status(404).send({ status: false, msg: "no data found" })
+        if (result.length === 0) return res.status(404).send({ status: false, msg: "no books found" })
 
         return res.status(200).send({ status: true, msg: "Books list", data: result })
     }
@@ -105,7 +105,7 @@ const getBookById = async function (req, res) {
     const result = await bookModel.findOne({ _id: bId, isDeleted: false })
 
     if (!result) return res.status(404).send({ status: false, msg: `No book found for this ${bId} book Id` })
-
+    
 
     return res.status(200).send({ status: true, msg: "Books list", data: result })
 
