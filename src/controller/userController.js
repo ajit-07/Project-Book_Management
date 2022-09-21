@@ -8,7 +8,8 @@ const createUser = async function (req, res) {
     try {
         let data = req.body;
         let { title, name, phone, email, password, address } = data
-        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Request body cannot be empty,please provide valid user details to create user" })
+
+        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Request body cannot be empty,please provide user details to create user" })
 
         if (!validator.isValidEnum(title)) return res.status(400).send({ status: false, msg: "Please enter a valid title,available titles are ['Mr','Mrs','Miss.]" })
 
@@ -77,8 +78,8 @@ const loginUser = async function (req, res) {
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
         }
 
-        const token = jwt.sign(payload,' Ajit - project - 3')
-        return res.status(200).send({ status: true, msg: "User logged in succesfully", data: token,iat:payload.iat,exp:payload.exp})
+        const token = jwt.sign(payload, ' Ajit - project - 3')
+        return res.status(200).send({ status: true, msg: "User logged in succesfully", data: token, iat: payload.iat, exp: payload.exp })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
@@ -87,4 +88,4 @@ const loginUser = async function (req, res) {
 }
 
 module.exports.createUser = createUser;
-module.exports.loginUser=loginUser;
+module.exports.loginUser = loginUser;
