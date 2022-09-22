@@ -153,27 +153,23 @@ const updateBook = async function (req, res) {
     let dupISBN = await bookModel.findOne({ ISBN: ISBN })
     if (dupISBN) return res.status(400).send({ status: false, msg: `ISBN ${ISBN} is already in use` })
 
-    let updatedBook=await bookModel.findOneAndUpdate({_id:bId},{title:title,excerpt:excerpt,ISBN:ISBN,releasedAt:releasedAt},{new:true})
-    return res.status(200).send({status:true,msg:"success",data:updatedBook})
+    let updatedBook = await bookModel.findOneAndUpdate({ _id: bId }, { title: title, excerpt: excerpt, ISBN: ISBN, releasedAt: releasedAt }, { new: true })
+    return res.status(200).send({ status: true, msg: "success", data: updatedBook })
 
 
 }
 
-const deleteBook=async function(req,res){
-    let bId=req.params.bookId;
+const deleteBook = async function (req, res) {
+    let bId = req.params.bookId;
 
     if (!ObjectId.isValid(bId)) return res.status(400).send({ status: false, msg: "Please enter valid Book Id,it should be of 24 digits +1" })
 
     let checkBook = await bookModel.findOne({ _id: bId, isDeleted: false })
     if (!checkBook) return res.status(404).send({ status: false, msg: "No book present with this book Id or is already deleted + 1" })
 
-    await bookModel.findOneAndUpdate({_id:bId},{isDeleted:true,deletedAt:new Date()},{new:true})
-    return res.status(200).send({status:false,msg:"Book deleted successfully!!"})
+    await bookModel.findOneAndUpdate({ _id: bId }, { isDeleted: true, deletedAt: new Date() }, { new: true })
+    return res.status(200).send({ status: false, msg: "Book deleted successfully!!" })
 }
 
 
-module.exports.createBook = createBook;
-module.exports.getBooks = getBooks;
-module.exports.getBookById = getBookById;
-module.exports.updateBook=updateBook;
-module.exports.deleteBook=deleteBook
+module.exports = { createBook, getBooks, getBookById, updateBook, deleteBook }
