@@ -31,7 +31,7 @@ const createUser = async function (req, res) {
 
         if (address) {
 
-            if (typeof address !== 'object') return res.status(400).send({ status: false, msg: "Type of address must be object" })
+            if (typeof address != "object") return res.status(400).send({ status: false, msg: "Type of address must be object" })
 
             if (Object.keys(address).length === 0) return res.status(400).send({ status: false, msg: "Address body cannot be empty,please provide address details" })
 
