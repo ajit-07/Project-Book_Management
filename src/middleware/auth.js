@@ -17,6 +17,8 @@ const authenticate = function (req, res, next) {
             if (err) { return res.status(400).send({ status: false, msg: "token is invalid!!" }) }
             req.decodedToken = decodedToken
 
+            if (Date.now() > (decodedToken.exp) * 1000) return res.status(400).send({ status: false, msg: "Token expired" })
+
             console.log(decodedToken)
             next()
         });
@@ -56,13 +58,14 @@ const authorisation = async function (req, res, next) {
             let checkBook = await bookModel.findById(bId)
             if (!checkBook) return res.status(404).send({ status: false, msg: "No book present with this book Id " })
 
-            if (checkBook.isDeleted == true) return res.status(400).send({ status: false, msg: "Book with the given id is already deleted!!" })
 
-            let userToBeModified = checkBook.userId;
+            let userToBeModified = checkBook.userId.toString();
 
             console.log(userToBeModified)
 
             if (userToBeModified !== userLoggedIn) return res.status(403).send({ status: false, msg: 'User not authorized to perform this action' })
+
+            if (checkBook.isDeleted == true) return res.status(400).send({ status: false, msg: "Book with the given id is already deleted!!" })
 
             next()
 
