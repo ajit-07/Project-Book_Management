@@ -50,7 +50,7 @@ const createBook = async function (req, res) {
 
 
         const bookCreated = await bookModel.create(data)
-        return res.status(201).send({ status: false, msg: "Success", data: bookCreated })
+        return res.status(201).send({ status: true, msg: "Success", data: bookCreated })
 
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -128,23 +128,27 @@ const updateBook = async function (req, res) {
     if (!checkBook) return res.status(404).send({ status: false, msg: "No book present with this book Id or is already deleted + 1" })
 
 
-    if (title || excerpt || ISBN || releasedAt) {
-        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Request body cann't be empty while updating" })
 
-        if (!validator.isValid(title)) return res.status(400).send({ status: false, msg: "Title is required and should be a valid string" })
+    if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Request body cann't be empty while updating" })
 
-        if (!validator.isValid(excerpt)) return res.status(400).send({ status: false, msg: "Excerpt is required and should be a valid string" })
+    if (title) { if (!validator.isValid(title)) return res.status(400).send({ status: false, msg: "Title is required and should be a valid string" }) }
 
+    if (excerpt) { if (!validator.isValid(excerpt)) return res.status(400).send({ status: false, msg: "Excerpt is required and should be a valid string" }) }
+
+    if (ISBN) {
         if (!validator.isValid(ISBN)) return res.status(400).send({ status: false, msg: "ISBN is required and should be a valid string" })
 
         const isb = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(ISBN) //check for format of ISBN
         if (isb == false) return res.status(400).send({ status: false, msg: "ISBN should of 13 digits and only hyphens allowed with digits" })
+    }
 
+    if (releasedAt) {
         if (!validator.isValid(releasedAt)) return res.status(400).send({ status: false, msg: "ReleasedAt is required and should be a valid string" })
 
         var date = moment(releasedAt, 'YYYY-MM-DD', true).isValid()
         if (!date) return res.status(400).send({ status: false, msg: "format of date is wrong,correct fromat is YYYY-MM-DD" })
-    } //validation ends here
+    }
+    //validation ends here
 
 
     let dupTitle = await bookModel.findOne({ title: title })
