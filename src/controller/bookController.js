@@ -4,6 +4,7 @@ const userModel = require('../models/userModel');
 const validator = require('../validators/validator')
 const ObjectId = mongoose.Types.ObjectId;
 const moment = require('moment');
+const reviewModel = require('../models/reviewModel');
 
 
 const createBook = async function (req, res) {
@@ -106,7 +107,7 @@ const getBookById = async function (req, res) {
     const result = await bookModel.findOne({ _id: bId, isDeleted: false })
 
     if (!result) return res.status(404).send({ status: false, msg: `No book found for this ${bId} book Id` })
-    let review = []
+    let review = await reviewModel.find({bookId:bId,isDeleted:false}).select({__v:0,isDeleted:0})
     let obj = result.toObject()
     obj['reviewsData'] = review
 
