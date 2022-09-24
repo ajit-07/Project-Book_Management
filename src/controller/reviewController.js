@@ -34,7 +34,7 @@ const createReview = async function (req, res) {
 
     const saveReview = await reviewModel.create(data)
 
-    let updateBook = await bookModel.findOneAndUpdate({ _id: bId }, { $inc: { reviews: 1 } }, { new: true })
+    let updateBook = await bookModel.findOneAndUpdate({ _id: bId }, { $inc: { reviews: +1 } }, { new: true })
 
     const response = await reviewModel.findById({ _id: saveReview._id }).select({ __v: 0, isDeleted: 0 })
     const final = updateBook.toObject();
@@ -60,7 +60,7 @@ const updateReview = async function (req, res) {
 
     if (!ObjectId.isValid(rId.trim())) return res.status(400).send({ status: false, msg: "Invalid review id in path params,review id should be of 24 digits" })
 
-    let checkReview = await reviewModel.findById(rId)
+    let checkReview = await reviewModel.findOne({_id:rId,bookId:bId})
     if (!checkReview) return res.status(404).send({ status: false, msg: "No review found for this book id!!" })
 
     if (checkReview.isDeleted == true) return res.status(400).send({ status: false, msg: "Cann't update review for this book as it is already deleted!" })
@@ -98,7 +98,31 @@ const updateReview = async function (req, res) {
 }
 
 const deleteReview=async function(req,res){
+    let bId = req.params.bookId;
+    let rId = req.params.reviewId;
 
+
+    if (!ObjectId.isValid(bId.trim())) return res.status(400).send({ status: false, msg: "Invalid Book id in path params,book id shouls be of 24 digits" })
+
+    let checkBook = await bookModel.findById(bId)
+    if (!checkBook) return res.status(404).send({ status: false, msg: "No book found for this book id!!" })
+
+    if (checkBook.isDeleted == true) return res.status(400).send({ status: false, msg: "Cann't delete review for this book as book is already deleted!" })
+
+    if (!ObjectId.isValid(rId.trim())) return res.status(400).send({ status: false, msg: "Invalid review id in path params,review id should be of 24 digits" })
+
+    let checkReview = await reviewModel.findOne({_id:rId,bookId:bId})
+    if (!checkReview) return res.status(404).send({ status: false, msg: "No review found for this review id matching book Id!!" })
+
+    if (checkReview.isDeleted == true) return res.status(400).send({ status: false, msg: "Cann't delete review as it is already deleted!" })
+
+
+    const deletedReview=await reviewModel.findByIdAndUpdate({_id:rId},{isDeleted:true},{new:true})
+
+    if(deletedReview){
+        await bookModel.findByIdAndUpdate({_id:bId},{$inc:{reviews:-1}},{new:true})
+    }
+    return res.status(200).send({status:false,msg:"Reviews deleted Successfully!!"})
 }
 
 
