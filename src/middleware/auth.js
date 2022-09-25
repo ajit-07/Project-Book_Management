@@ -14,12 +14,15 @@ const authenticate = function (req, res, next) {
 
 
         jwt.verify(token, "Group-69-Project-3", function (err, decodedToken) {
-            if (err) { return res.status(400).send({ status: false, msg: "token is invalid!!" }) }
-            req.decodedToken = decodedToken
+            if (err) {
+                let message =
+                    err.message === "jwt expired" ? "Token is expired" : "Token is ivalid";
+                return res.status(401).send({ status: false, msg: message })
+            }
 
-            if (Date.now() > (decodedToken.exp) * 1000) return res.status(400).send({ status: false, msg: "Token expired" })
+            req.decodedToken = decodedToken //setting an attribute in req so that we can access it everywhere
 
-            console.log(decodedToken)
+            //console.log(decodedToken)
             next()
         });
 
@@ -49,7 +52,7 @@ const authorisation = async function (req, res, next) {
             if (userId !== userLoggedIn) return res.status(403).send({ status: false, msg: 'User not authorized to perform this action' })
             next()
         }
-        if (req.params.bookId) {
+        if (req.params.bookId) {  //check authorization when id is coming from path params
 
             let bId = req.params.bookId;
 
@@ -61,7 +64,7 @@ const authorisation = async function (req, res, next) {
 
             let userToBeModified = checkBook.userId.toString();
 
-            console.log(userToBeModified)
+            //console.log(userToBeModified)
 
             if (userToBeModified !== userLoggedIn) return res.status(403).send({ status: false, msg: 'User not authorized to perform this action' })
 
@@ -76,5 +79,4 @@ const authorisation = async function (req, res, next) {
         return res.status(500).send({ status: false, msg: err.message })
     }
 }
-module.exports.authenticate = authenticate
-module.exports.authorisation = authorisation
+module.exports = { authenticate, authorisation };

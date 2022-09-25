@@ -7,9 +7,13 @@ const createUser = async function (req, res) {
 
     try {
         let data = req.body;
-        let { title, name, phone, email, password, address } = data
+        let { title, name, phone, email, password, address } = data  //Object destructuring
+
+        //Request body validation
 
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Request body cannot be empty,please provide user details to create user" })
+
+        //Validation for data inside request body
 
         if (!validator.isValidEnum(title)) return res.status(400).send({ status: false, msg: "Please enter a valid title,available titles are ['Mr','Mrs','Miss.]" })
 
@@ -29,7 +33,7 @@ const createUser = async function (req, res) {
         const password1 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,15})/.test(password)
         if (password1 == false) return res.status(400).send({ status: false, msg: "Password should contain min:8 and max:15 characters " })
 
-        if (address) {
+        if (address) {  //address object validation
 
             if (typeof address != "object") return res.status(400).send({ status: false, msg: "Type of address must be object" })
 
@@ -41,6 +45,8 @@ const createUser = async function (req, res) {
 
             if (!validator.isValid(address.pincode)) return res.status(400).send({ status: false, msg: "Please enter a valid pincode for address" })
         }
+
+        //checking uniqueness of phone and email
 
         let dupPhone = await userModel.findOne({ phone: phone })
         if (dupPhone) return res.status(409).send({ status: false, msg: `This mobile number is ${phone} already in use ` })
@@ -62,6 +68,8 @@ const loginUser = async function (req, res) {
     try {
         let data = req.body;
         let { email, password } = data
+
+
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "User credentials body empty!!" })
 
         if (!validator.isValid(email)) return res.status(400).send({ status: false, msg: "email is required!!" })
@@ -75,11 +83,13 @@ const loginUser = async function (req, res) {
         let payload = {
             userId: id,
             iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
+            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 //Token valid for one day!!
         }
 
-        const token = jwt.sign(payload, 'Group-69-Project-3')
+        const token = jwt.sign(payload, 'Group-69-Project-3') //token generation
+
         return res.status(200).send({ status: true, msg: "User logged in succesfully", data: token, iat: payload.iat, exp: payload.exp })
+
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
@@ -87,5 +97,4 @@ const loginUser = async function (req, res) {
 
 }
 
-module.exports.createUser = createUser;
-module.exports.loginUser = loginUser;
+module.exports = { createUser, loginUser };
