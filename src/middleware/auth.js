@@ -56,6 +56,7 @@ const authorisation = async function (req, res, next) {
 
             let bId = req.params.bookId;
 
+
             if (!ObjectId.isValid(bId)) return res.status(400).send({ status: false, msg: "Please enter valid Book Id,it should be of 24 digits" })
 
             let checkBook = await bookModel.findById(bId)
@@ -73,6 +74,7 @@ const authorisation = async function (req, res, next) {
             next()
 
         }
+        next()
 
     }
     catch (err) {

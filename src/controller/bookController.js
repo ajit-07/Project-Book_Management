@@ -16,7 +16,7 @@ const createBook = async function (req, res) {
 
         //check for validation and existence of user by userId from request body
 
-        if (!validator.isValid(userId)) return res.status(400).send({ status: false, msg: "User Id is required and should be a valid string+1" })
+        if (!validator.isValid(userId)) return res.status(400).send({ status: false, msg: "User Id is required and should be a valid string" })
 
         if (!ObjectId.isValid(userId)) return res.status(400).send({ status: false, msg: "Invalid user id it should be of 24 digits+1" })
 
@@ -132,10 +132,10 @@ const updateBook = async function (req, res) {
         let data = req.body;
         let { title, excerpt, releasedAt, ISBN } = data;
 
-        if (!ObjectId.isValid(bId)) return res.status(400).send({ status: false, msg: "Please enter valid Book Id,it should be of 24 digits + 1" })
+        if (!ObjectId.isValid(bId)) return res.status(400).send({ status: false, msg: "Please enter valid Book Id,it should be of 24 digits " })
 
         let checkBook = await bookModel.findOne({ _id: bId, isDeleted: false })
-        if (!checkBook) return res.status(404).send({ status: false, msg: "No book present with this book Id or is already deleted + 1" })
+        if (!checkBook) return res.status(404).send({ status: false, msg: "No book present with this book Id or is already deleted " })
 
 
 
@@ -179,10 +179,11 @@ const deleteBook = async function (req, res) {
     try {
         let bId = req.params.bookId;
 
-        if (!ObjectId.isValid(bId)) return res.status(400).send({ status: false, msg: "Please enter valid Book Id,it should be of 24 digits +1" })
+
+        if (!ObjectId.isValid(bId)) return res.status(400).send({ status: false, msg: "Please enter valid Book Id,it should be of 24 digits " })
 
         let checkBook = await bookModel.findOne({ _id: bId, isDeleted: false })
-        if (!checkBook) return res.status(404).send({ status: false, msg: "No book present with this book Id or is already deleted + 1" })
+        if (!checkBook) return res.status(404).send({ status: false, msg: "No book present with this book Id or is already deleted " })
 
         await bookModel.findOneAndUpdate({ _id: bId }, { isDeleted: true, deletedAt: new Date() }, { new: true })
         return res.status(200).send({ status: false, msg: "Book deleted successfully!!" })
