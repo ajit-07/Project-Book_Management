@@ -83,7 +83,7 @@ const loginUser = async function (req, res) {
         let payload = {
             userId: id,
             iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 //Token valid for one day!!
+            exp: Math.floor(Date.now() / 1000) + 60*60*24  //Token valid for one day!!
         }
 
         const token = jwt.sign(payload, 'Group-69-Project-3') //token generation
